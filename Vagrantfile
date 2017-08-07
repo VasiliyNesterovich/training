@@ -30,5 +30,8 @@ Vagrant.configure(2) do |config|
 		inline: "git add Vagrantfile"
 		config.vm.provision "commit", type: "shell",
 		inline: "git commit -m 'Vagrantfile'"
+		config.vm.provision "ping", type: "shell",
+		inline: "ping -c 3 server1"
+
 	end
 end
