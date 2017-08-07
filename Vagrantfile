@@ -22,5 +22,13 @@ Vagrant.configure(2) do |config|
 		inline: "sudo yum install git -y"
 		#server2.vm.network "private_network", ip: "172.20.20.11"
 		server2.vm.network "public_network"
+		config.vm.provision "clone", type: "shell",
+		inline: "git clone https://github.com/VasiliyNesterovich/training.git"
+		config.vm.provision "cat", type: "shell",
+		inline: "cat task1"
+		config.vm.provision "add", type: "shell",
+		inline: "git add Vagrantfile"
+		config.vm.provision "commit", type: "shell",
+		inline: "git commit -m 'Vagrantfile'"
 	end
 end
