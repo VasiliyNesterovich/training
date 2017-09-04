@@ -1,0 +1,81 @@
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies{
+	compile group: 'log4j', name: 'log4j', version: '1.2.17'
+	compile group: 'commons-io', name: 'commons-io', version: '2.5'
+}
+
+
+task versionTxt() << {
+    def file = new File(file)
+ //int str=Integer.parseInt(artifactMajorVersion.substring(artifactMajorVersion.length() - 1))
+int patch = Integer.parseInt(versionPatch)
+int minor = Integer.parseInt(versionMinor)
+int major = Integer.parseInt(versionMajor)
+if(patch == 9999){
+	patch = 0
+	if(minor == 9){
+		minor = 0
+			major++
+	 }else minor++
+ }else {
+ 	patch++
+ }
+
+int value = patch + 10000
+String valueX = "" + value
+String valueY = valueX.substring(1)
+String version = major + "." + minor + "." + valueY
+println version
+
+Properties props = new Properties()
+File propsFile = new File('gradle.properties')
+props.load(propsFile.newDataInputStream())
+
+props.setProperty('versionPatch', String.valueOf(valueY))
+props.setProperty('versionMinor', String.valueOf(minor))
+props.setProperty('versionMajor', String.valueOf(major))
+props.store(propsFile.newWriter(), null)
+
+    file.text = """Hello Gradle $version
+"""
+
+
+}
+task b(dependsOn: versionTxt){
+    // up-to-date check for inputs, plus add copyTask as dependency
+    inputs.file file
+    outputs.dir 'build/resources/main/' // up-to-date check for outputs
+    doLast{
+        copy {
+            // Copy the output of copyTask
+            from 'greeting.txt'
+            into 'build/resources/main/'
+        }
+    }
+}
+
+war  {
+	def file = new File(file)
+
+int patch = Integer.parseInt(versionPatch)
+int minor = Integer.parseInt(versionMinor)
+int major = Integer.parseInt(versionMajor)
+
+int value = patch + 10000
+String valueX = "" + value
+String valueY = valueX.substring(1)
+String version = major + "." + minor + "." + valueY
+println version
+
+Properties props = new Properties()
+File propsFile = new File('gradle.properties')
+props.load(propsFile.newDataInputStream())
+	war.baseName = 'task3' + '-' + 'snapshot' + '-' + version
+}
